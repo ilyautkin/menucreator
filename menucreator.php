@@ -20,68 +20,43 @@ $resources = $modx->getCollection('modResource',$where); //загружаем в
 
 if (isset($tpl) && $tpl) //Если в вызове сниппета задан шаблон
 {
-    if (isset($showSubMenu) && $showSubMenu == 1) //Если показываем подменю
-    {
-        if (isset($ulClass) && $ulClass) //Если есть класс для ul обертки меню
-        {
-            $output .= '<ul class="'.$ulClass.'">';
-        }
-        else //Если нет класса для ul обертки меню
-        {
-            $output .= '<ul>';
-        }
-        $template = $modx->getOption('tpl',$scriptProperties,$tpl); //загружаем наш чанк
-        foreach ($resources as $resource)
-        {
-            $resourceArray = $resource->toArray(); //забираем все параметры ресурса для передачи их в чанк
-            if (isset($resourceArray['parent']) && $resourceArray['parent']>0)
-            {
-                unset($resourceArray);
-            }
-            else
-            {
-                $subwhere = array('hidemenu'=>$hidemenu, 'published' => true, 'parent'=>$resourceArray['id']);
-                $subresources = $modx->getCollection('modResource',$subwhere);
-                if (isset($subresources) && $subresources)
-                {
-                    $output .= '<ul>';
-                }
-                foreach ($subresources as $subresource)
-                {
-                    $subresourceArray = $subresource->toArray();
-                    $output .= $modx->getChunk($template,$subresourceArray);
-                }
-                if (isset($subresources) && $subresources)
-                {
-                    $output .= '</ul>';
-                }
-                $resourceArray['test1']='test22Ok';
-                $output .= $modx->getChunk($template,$resourceArray);
-            }
-        }
-        $output .= '</ul>';
-    }
-    else //Если не показываем подменю
-    {
-        if (isset($ulClass) && $ulClass) //Если есть класс для ul обертки меню
-        {
-            $output .= '<ul class="'.$ulClass.'">';
-        }
-        else //Если нет класса для ul обертки меню
-        {
-            $output .= '<ul>';
-        }
-        $template = $modx->getOption('tpl',$scriptProperties,$tpl); //загружаем наш чанк
-        foreach ($resources as $resource)
-        {
-            $resourceArray = $resource->toArray(); //забираем все параметры ресурса для передачи их в чанк
 
+        if (isset($ulClass) && $ulClass) //Если есть класс для ul обертки меню
+        {
+            $output .= '<ul class="'.$ulClass.'">';
+        }
+        else //Если нет класса для ul обертки меню
+        {
+            $output .= '<ul>';
+        }
+        $template = $modx->getOption('tpl',$scriptProperties,$tpl); //загружаем наш чанк
+        foreach ($resources as $resource)
+        {
+            $resourceArray = $resource->toArray(); //забираем все параметры ресурса для передачи их в чанк
             if (isset($resourceArray['parent']) && $resourceArray['parent']>0)
             {
                 unset($resourceArray);
             }
             else
             {
+	        if (isset($showSubMenu) && $showSubMenu == 1) //Если показываем подменю
+		{
+		        $subwhere = array('hidemenu'=>$hidemenu, 'published' => true, 'parent'=>$resourceArray['id']);
+		        $subresources = $modx->getCollection('modResource',$subwhere);
+		        if (isset($subresources) && $subresources)
+		        {
+		            $output .= '<ul>';
+		        }
+		        foreach ($subresources as $subresource)
+		        {
+		            $subresourceArray = $subresource->toArray();
+		            $output .= $modx->getChunk($template,$subresourceArray);
+		        }
+		        if (isset($subresources) && $subresources)
+		        {
+		            $output .= '</ul>';
+		        }
+		}
                 $resourceArray['test1']='test22Ok';
                 $output .= $modx->getChunk($template,$resourceArray);
             }
